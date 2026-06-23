@@ -64,7 +64,7 @@ const Footer = ({
   sections = defaultSections,
   description = "Track expenses, analyze spending, and make smarter financial decisions — all in one clean, powerful dashboard.",
   socialLinks = defaultSocialLinks,
-  copyright = "© 2025 Riya Shekhawat. All rights reserved.",
+  copyright = "© 2025 Chirag Agrawal. All rights reserved.",
   legalLinks = defaultLegalLinks,
 }) => {
   return (
