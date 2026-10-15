@@ -20,6 +20,10 @@ class Category(Base):
     # No delete cascade: deleting a category must NOT delete the user's
     # transactions. They are un-categorized instead (see routers/category.py).
     transactions = relationship("Transaction", back_populates="category")
+    # A category's budget is removed together with the category
+    budgets = relationship(
+        "Budget", back_populates="category", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (
         UniqueConstraint("user_id", "name", name="uq_user_category_name"),

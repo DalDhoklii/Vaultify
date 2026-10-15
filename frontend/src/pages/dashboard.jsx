@@ -23,7 +23,10 @@ import MonthlyTrendChart from "@/components/charts/monthly-trend-chart";
 import { PageHeader } from "@/components/page-header";
 import { LoadingState } from "@/components/loading-state";
 import { EmptyState } from "@/components/empty-state";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Wallet } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { toMonthKey } from "@/store/slices/budgets";
 
 const ranges = [
   { label: "Last 30 days", value: "30" },
@@ -39,6 +42,8 @@ export default function DashboardPage() {
   const fetchCategories = useStore((state) => state.fetchCategories);
   const settings = useStore((state) => state.settings);
   const fxRates = useStore((state) => state.fxRates);
+  const budgetStatus = useStore((state) => state.budgetStatus);
+  const fetchBudgetStatus = useStore((state) => state.fetchBudgetStatus);
   const baseCurrency = settings?.currency || "USD";
   const displayCurrency = settings?.display_currency || baseCurrency;
 
@@ -75,6 +80,17 @@ export default function DashboardPage() {
       isMounted = false;
     };
   }, [fetchTransactions, fetchCategories, range]);
+
+  useEffect(() => {
+    // Budgets always show the current month, independent of the range filter
+    fetchBudgetStatus(toMonthKey()).catch(() => {});
+  }, [fetchBudgetStatus]);
+
+  // Most-used budgets first, so the ones that need attention are on top
+  const topBudgets = useMemo(() => {
+    const items = budgetStatus?.month === toMonthKey() ? budgetStatus.items : [];
+    return [...items].sort((a, b) => b.percent_used - a.percent_used).slice(0, 4);
+  }, [budgetStatus]);
 
   const categoryLookup = useMemo(() => {
     return categories.reduce((acc, category) => {
@@ -232,6 +248,57 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle>Budgets this month</CardTitle>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/budgets">View all</Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {topBudgets.length === 0 ? (
+                  <EmptyState
+                    icon={Wallet}
+                    title="No budgets yet"
+                    description="Set monthly limits for your expense categories on the Budgets page."
+                  />
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {topBudgets.map((item) => (
+                      <div key={item.budget_id} className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="font-medium">{item.category_name}</span>
+                          <span className="text-muted-foreground">
+                            {formatCurrency(item.spent, displayCurrency, {
+                              rates: fxRates,
+                              baseCurrency,
+                            })}{" "}
+                            /{" "}
+                            {formatCurrency(item.limit, displayCurrency, {
+                              rates: fxRates,
+                              baseCurrency,
+                            })}
+                          </span>
+                        </div>
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                          <div
+                            className={
+                              item.status === "over"
+                                ? "h-full bg-red-500"
+                                : item.status === "warning"
+                                  ? "h-full bg-amber-500"
+                                  : "h-full bg-green-500"
+                            }
+                            style={{ width: `${Math.min(item.percent_used, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             <Card>
               <CardHeader>

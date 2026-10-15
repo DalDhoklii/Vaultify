@@ -15,12 +15,14 @@ const TransactionsPage = lazy(() => import("./pages/transactions"));
 const ReportsPage = lazy(() => import("./pages/reports"));
 const CategoriesPage = lazy(() => import("./pages/categories/categories"));
 const SettingsPage = lazy(() => import("./pages/settings"));
+const BudgetsPage = lazy(() => import("./pages/budgets"));
 
 const protectedRoutes = [
   { path: "/dashboard", Page: DashboardPage },
   { path: "/transactions", Page: TransactionsPage },
   { path: "/reports", Page: ReportsPage },
   { path: "/categories", Page: CategoriesPage },
+  { path: "/budgets", Page: BudgetsPage },
   { path: "/settings", Page: SettingsPage },
 ];
 

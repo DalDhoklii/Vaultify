@@ -5,6 +5,7 @@ import createAuthSlice from "./slices/auth";
 import createSettingsSlice from "./slices/settings";
 import createCategoriesSlice from "./slices/categories";
 import createTransactionsSlice from "./slices/transactions";
+import createBudgetsSlice from "./slices/budgets";
 
 const useStore = create(
   devtools(
@@ -13,6 +14,7 @@ const useStore = create(
       ...createSettingsSlice(set, get),
       ...createCategoriesSlice(set, get),
       ...createTransactionsSlice(set, get),
+      ...createBudgetsSlice(set, get),
     }),
     { name: "Store" }
   )

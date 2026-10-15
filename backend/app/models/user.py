@@ -18,6 +18,9 @@ class User(Base):
     categories = relationship(
         "Category", back_populates="user", cascade="all, delete-orphan"
     )
+    budgets = relationship(
+        "Budget", back_populates="user", cascade="all, delete-orphan"
+    )
     settings = relationship(
         "Settings", back_populates="user", uselist=False, cascade="all, delete-orphan"
     )

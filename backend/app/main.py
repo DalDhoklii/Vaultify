@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import auth, category, transaction, users
+from app.routers import auth, budget, category, transaction, users
 from app.routers import settings as settings_router
 
 app = FastAPI(
@@ -34,3 +34,4 @@ app.include_router(category.router)
 app.include_router(transaction.router)
 app.include_router(settings_router.router)
 app.include_router(users.router)
+app.include_router(budget.router)

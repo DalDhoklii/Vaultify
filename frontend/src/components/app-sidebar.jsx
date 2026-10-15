@@ -5,6 +5,7 @@ import {
   Settings2,
   Table2Icon,
   Layers,
+  Wallet,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -32,7 +33,6 @@ export function AppSidebar({ ...props }) {
         title: "Dashboard",
         url: "/dashboard",
         icon: LucideLayoutDashboard,
-        isActive: true,
       },
       {
         title: "Transactions",
@@ -48,6 +48,11 @@ export function AppSidebar({ ...props }) {
         title: "Categories",
         url: "/categories",
         icon: Layers,
+      },
+      {
+        title: "Budgets",
+        url: "/budgets",
+        icon: Wallet,
       },
       {
         title: "Settings",

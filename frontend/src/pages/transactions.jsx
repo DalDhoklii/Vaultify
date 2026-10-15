@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
 import { LoadingState } from "@/components/loading-state";
 import { EmptyState } from "@/components/empty-state";
+import { toMonthKey } from "@/store/slices/budgets";
 
 const NO_CATEGORY = "none";
 
@@ -66,6 +67,7 @@ export default function TransactionsPage() {
   const addTransaction = useStore((state) => state.addTransaction);
   const updateTransaction = useStore((state) => state.updateTransaction);
   const deleteTransaction = useStore((state) => state.deleteTransaction);
+  const fetchBudgetStatus = useStore((state) => state.fetchBudgetStatus);
   const categories = useStore((state) => state.categories);
   const fetchCategories = useStore((state) => state.fetchCategories);
   const settings = useStore((state) => state.settings);
@@ -230,6 +232,32 @@ export default function TransactionsPage() {
     setOpen(true);
   };
 
+  // After saving an expense, warn if its category's budget is nearly used up.
+  // Controlled by the "Budget alerts" switch in Settings.
+  const checkBudgetAlert = async (payload) => {
+    if (payload.type !== "expense" || !payload.category_id) return;
+    if (settings && settings.budget_alerts === false) return;
+    try {
+      const month = toMonthKey(payload.date ? new Date(payload.date) : new Date());
+      const status = await fetchBudgetStatus(month);
+      const item = status.items.find((i) => i.category_id === payload.category_id);
+      if (!item || item.status === "ok") return;
+      const left = formatCurrency(Math.abs(item.remaining), displayCurrency, {
+        rates: fxRates,
+        baseCurrency,
+      });
+      if (item.status === "over") {
+        toast.error(`${item.category_name} budget exceeded by ${left}.`);
+      } else {
+        toast.warning(
+          `${item.category_name} budget is ${item.percent_used}% used — ${left} left.`,
+        );
+      }
+    } catch {
+      // budget alerts are a nice-to-have; never block saving a transaction
+    }
+  };
+
   const handleSave = async () => {
     setError(null);
     const payload = {
@@ -254,6 +282,7 @@ export default function TransactionsPage() {
       setOpen(false);
       resetForm();
       await loadTransactions();
+      checkBudgetAlert(payload);
     } catch (err) {
       setError(err?.detail || err?.message || "Failed to save transaction.");
       toast.error(err?.detail || err?.message || "Failed to save transaction.");

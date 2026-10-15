@@ -136,6 +136,12 @@ def update_category(
             )
         category.name = category_in.name
     if category_in.type is not None:
+        if category_in.type != TransactionType.EXPENSE and category.budgets:
+            raise HTTPException(
+                status_code=400,
+                detail="Remove this category's budget before making it "
+                "an income category.",
+            )
         category.type = category_in.type
     if category_in.color is not None:
         category.color = category_in.color

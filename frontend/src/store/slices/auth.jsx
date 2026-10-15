@@ -33,6 +33,8 @@ const EMPTY_USER_DATA = {
   categoryUsage: {},
   transactions: [],
   transactionsMeta: null,
+  budgets: [],
+  budgetStatus: null,
 };
 
 const createAuthSlice = (set) => ({
