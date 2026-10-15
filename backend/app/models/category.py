@@ -14,7 +14,7 @@ class Category(Base):
     color = Column(String, nullable=True)
     icon = Column(String, nullable=True)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
     user = relationship("User", back_populates="categories")
 
     # No delete cascade: deleting a category must NOT delete the user's

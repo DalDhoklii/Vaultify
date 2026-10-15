@@ -6,7 +6,8 @@ from app.models.transaction import TransactionType
 
 
 class TransactionBase(BaseModel):
-    amount: float = Field(gt=0)
+    # stored as Numeric(12, 2): the database rounds to 2 decimal places
+    amount: float = Field(gt=0, lt=10_000_000_000)
     type: TransactionType
     description: str | None = None
     date: datetime | None = None
@@ -18,7 +19,7 @@ class TransactionCreate(TransactionBase):
 
 
 class TransactionUpdate(BaseModel):
-    amount: float | None = Field(default=None, gt=0)
+    amount: float | None = Field(default=None, gt=0, lt=10_000_000_000)
     type: TransactionType | None = None
     description: str | None = None
     date: datetime | None = None

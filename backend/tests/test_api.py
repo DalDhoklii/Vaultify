@@ -100,3 +100,15 @@ def test_pagination_headers(client, auth_headers):
     )
     assert len(res.json()) == 2
     assert res.headers["x-total-count"] == "3"
+
+
+def test_amounts_are_exact(client, auth_headers):
+    cat = _category(client, auth_headers)
+    for amount in (0.1, 0.2):
+        client.post(
+            "/transactions/",
+            json={"amount": amount, "type": "expense", "category_id": cat["id"]},
+            headers=auth_headers,
+        )
+    usage = client.get("/categories/usage", headers=auth_headers).json()
+    assert usage[0]["expense_total"] == 0.3  # with Float this was 0.30000000000000004
