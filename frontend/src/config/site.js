@@ -3,14 +3,14 @@
 export const siteConfig = {
   name: "Vaultify",
   owner: "Chirag Agrawal",
-  // e.g. "https://github.com/<your-username>/Vaultify"
+  // e.g. "https://github.com/DalDhoklii/Vaultify"
   repoUrl: "",
   social: {
     // e.g. "mailto:you@example.com"
-    email: "",
+    email: "mailto:chirag.agr0611@gmail.com",
     // e.g. "https://www.linkedin.com/in/<your-handle>/"
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/chiragmiyy/",
     // e.g. "https://github.com/<your-username>"
-    github: "",
+    github: "https://github.com/DalDhoklii",
   },
 };
